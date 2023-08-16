@@ -27,8 +27,10 @@ public class BoardController {
     private BoardValidator boardValidator;
 
     @GetMapping("/list")
-    public String list(Model model, @PageableDefault(size = 2) Pageable pageable) {
-        Page<Board> boards = boardRepository.findAll(pageable);
+    public String list(Model model, @PageableDefault(size = 2) Pageable pageable, @RequestParam(required = false, defaultValue = "") String searchText) {
+//        Page<Board> boards = boardRepository.findAll(pageable); 조건 없이 모든 검색에 쓰임
+        // 아래는 제목 or 내용으로 검색
+        Page<Board> boards = boardRepository.findByTitleContainingOrContentContaining(searchText, searchText, pageable);
 //        boards.getTotalElements(); 이걸로 총 게시글의 수를 얻는데, html에서 boards.totalElement의 형식으로 가져올 수 있음
         int startPage = Math.max(1, boards.getPageable().getPageNumber() - 4);
         int endPage = Math.min(boards.getTotalPages(), boards.getPageable().getPageNumber() + 4);
